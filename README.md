@@ -82,40 +82,9 @@ About 페이지의 오버레이 폼에서 문의를 전송하면 백엔드가 S3
 | Infra & 기타 | CloudFront/S3 CDN, Kakao Talk Memo API, Pretendard 폰트 |
 
 ## 🏗️ 시스템 아키텍처
-
-```mermaid
-graph TD
-  U[사용자 브라우저]
-
-  subgraph Frontend
-    FE[React 18 SPA<br/>React Router · React-Bootstrap<br/>Framer Motion · Lazy Load · Axios]
-    CDN[CloudFront/S3 CDN<br/>`REACT_APP_CDN_URL`]
-  end
-
-  subgraph Backend_Local[Backend (로컬)]
-    BEExpress[Express API (Node.js 18)<br/>body-parser · fs · Axios]
-    LocalStore[로컬 JSON 데이터 스토어]
-  end
-
-  subgraph Backend_Serverless[Backend (Serverless)]
-    APIGW[API Gateway]
-    LambdaInquiry[AWS Lambda Inquiry Handler<br/>Node.js · AWS SDK v3]
-    S3Inquiry[S3 문의 데이터]
-    LambdaKakao[Kakao Talk 알림 Lambda]
-    KakaoAPI[Kakao Talk Memo API]
-  end
-
-  U -->|HTTPS| FE
-  FE -->|이미지 요청| CDN
-  FE -->|REST /inquiries| BEExpress
-  BEExpress -->|저장| LocalStore
-
-  FE -->|REST /inquiries| APIGW
-  APIGW --> LambdaInquiry
-  LambdaInquiry -->|저장| S3Inquiry
-  LambdaInquiry -->|트리거| LambdaKakao
-  LambdaKakao -->|알림| KakaoAPI
-```
+<div align="center">
+  <img src="./img/pipeline.png" alt="pipeline Preview" style="width:50%; max-width:1280px;"/>
+</div>
 
 ## 🚀 설치 방법
 
