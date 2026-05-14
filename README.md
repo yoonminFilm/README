@@ -1,16 +1,14 @@
 # Yoonmin Film Archive
 
 <div align="center">
-  <img src="./img/banner-logo.png" alt="Yoonmin Film Archive" width="40%"/>
-  <br/><br/>
-  <a href="https://www.yoonminfilm.co.kr"><strong>www.yoonminfilm.co.kr</strong></a>
+  <a href="https://www.yoonminfilm.co.kr"><img src="./img/banner-logo.png" alt="Yoonmin Film Archive" width="60%"/></a>
 </div>
 
 <br/>
 
 ## About
 
-Yoonmin Film Archive는 사진 작가 윤성민의 오리지널 작품을 큐레이팅하는 디지털 갤러리입니다.
+Yoonmin Film Archive는 Yoonmin님의 오리지널 작품을 큐레이팅하는 디지털 갤러리입니다.
 
 필름과 디지털로 담아낸 도시의 빛, 여행의 순간, 사람의 온도를 한곳에 모아 전시합니다. 단순한 포트폴리오를 넘어, 각 프로젝트의 맥락과 이야기를 카테고리별로 탐색할 수 있는 아카이브 형태로 구성되어 있습니다.
 
