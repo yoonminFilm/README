@@ -1,86 +1,166 @@
 # Yoonmin Film Archive
 
 <div align="center">
-  <img src="./img/banner-logo.png" alt="Yoonmin Film Archive 로고" width="50%"/>
+  <img src="./img/banner-logo.png" alt="Yoonmin Film Archive" width="40%"/>
+  <br/><br/>
+  <p><strong>Photography Portfolio & Archive Platform</strong></p>
+  <p>작품과 커머셜 프로젝트를 한곳에 담아내는 디지털 갤러리</p>
+  <br/>
+  <a href="https://www.yoonminfilm.co.kr">www.yoonminfilm.co.kr</a>
 </div>
 
-> **사진 아카이브 플랫폼** — 작품과 커머셜 작업을 한곳에 담아내는 디지털 갤러리
+<br/>
 
-## 📖 프로젝트 소개
+## Overview
 
-Yoonmin Film Archive는 사진 작가 윤성민의 디지털/필름 작품과 커머셜 프로젝트를 한곳에 모아 전시하는 **풀스택 웹 애플리케이션**입니다.
+Yoonmin Film Archive는 사진 작가 윤성민의 포트폴리오 웹 애플리케이션입니다.
+프로젝트별 갤러리, 카테고리 기반 작품 탐색, 문의 시스템, 관리자 대시보드를 제공합니다.
 
-- 🖼️ 카테고리별 작품 갤러리 (디지털 / 필름 / 도시 패턴 등)
-- 📱 모바일 & 데스크톱 반응형 UI
-- 📮 자동화된 문의 접수 및 카카오톡 알림
-- ☁️ AWS Serverless 기반 백엔드 인프라
+<br/>
 
-## ✨ 주요 기능
-
-| 기능 | 설명 |
-|------|------|
-| **몰입형 갤러리** | Masonry 그리드와 모달 뷰로 작품 감상. JSON 메타데이터 기반 섹션 관리 |
-| **지연 로딩 & 애니메이션** | `react-lazy-load-image-component`와 Framer Motion으로 부드러운 전환 |
-| **자동 문의 응답** | 폼 전송 시 S3 저장 + 카카오톡 실시간 알림 |
-| **CDN 기반 이미지 제공** | CloudFront/S3를 통한 빠른 이미지 로딩 |
-
-## 🛠 기술 스택
+## Tech Stack
 
 <div align="center">
-  <img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="React 18"/>
-  <img src="https://img.shields.io/badge/Node.js-18-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js 18"/>
-  <img src="https://img.shields.io/badge/AWS-Serverless-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white" alt="AWS Serverless"/>
+  <img src="https://img.shields.io/badge/Next.js-16-000000?style=for-the-badge&logo=next.js&logoColor=white"/>
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white"/>
+  <img src="https://img.shields.io/badge/DynamoDB-4053D6?style=for-the-badge&logo=amazondynamodb&logoColor=white"/>
+  <img src="https://img.shields.io/badge/S3-569A31?style=for-the-badge&logo=amazons3&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Lambda-FF9900?style=for-the-badge&logo=awslambda&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white"/>
 </div>
 
-| 구분 | 사용 기술 |
-|------|-----------|
-| **Frontend** | React 18, React Router, React-Bootstrap, Framer Motion, Axios |
-| **Backend (로컬)** | Node.js, Express, body-parser, Axios |
-| **Backend (Serverless)** | AWS Lambda, API Gateway, S3, AWS SDK v3 |
-| **Infra & 기타** | CloudFront/S3 CDN, Kakao Talk Memo API, Vercel Analytics |
+<br/>
 
-## 🏗️ 시스템 아키텍처
+| Layer | Technology |
+|-------|-----------|
+| **Frontend** | Next.js 16 (App Router), React 19, Framer Motion |
+| **Styling** | Tailwind CSS v4, Pretendard Variable Font |
+| **Database** | DynamoDB (Single Table Design) |
+| **Storage** | S3 (presigned upload, public read) |
+| **Image Processing** | Lambda + sharp (auto resize on upload) |
+| **Auth** | JWT (HttpOnly cookie) + bcrypt |
+| **Notification** | Resend (email on inquiry) |
+| **Deploy** | Vercel (frontend) + AWS Lambda (image resize) |
 
-<div align="center">
-  <img src="./img/pipeline.png" alt="시스템 아키텍처" style="width:60%; max-width:800px;"/>
-</div>
+<br/>
 
-## 📁 프로젝트 구조
+## Architecture
 
-```text
-yoonminFilmArchive/
-├── FrontEnd/                    # React SPA
-│   ├── public/
-│   │   └── imageJson/           # 작품 메타데이터 JSON
-│   └── src/
-│       ├── components/          # 공통 컴포넌트 (Navbar, Footer, Overlay)
-│       ├── config/              # CDN URL 헬퍼
-│       ├── features/            # 페이지별 기능 모듈
-│       │   ├── mainPage/        # 메인 페이지
-│       │   ├── projectPage/     # 프로젝트 갤러리
-│       │   ├── aboutPage/       # About 페이지 & 문의 폼
-│       │   └── shopPage/        # Shop 페이지 (확장 예정)
-│       └── assets/              # 정적 리소스
-│
-├── BackEnd/                     # Node.js & Serverless
-│   └── api/
-│       ├── inquiry/             # 문의 API (Express & Lambda)
-│       ├── kakaoTalkAlam/       # 카카오 알림 API (Express & Lambda)
-│       └── shopInfo/            # Shop 관련 API
-│
-├── ProjectImageStorage/         # 원본 이미지 보관 (배포 미포함)
-│
-└── README/                      # 상세 문서 및 이미지
+```
+┌─────────────────────────────────────────────────────────┐
+│                        Client                           │
+│              (Browser / Mobile)                         │
+└──────────────────────┬──────────────────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────────────────┐
+│                    Vercel (Edge)                         │
+│  ┌──────────┐  ┌───────────┐  ┌──────────────────────┐  │
+│  │ Middleware│─▶│ App Router│  │  Static / ISR Pages  │  │
+│  │ (JWT Auth)│  │ API Routes│  │  (project/[slug])    │  │
+│  └──────────┘  └─────┬─────┘  └──────────────────────┘  │
+└──────────────────────┼──────────────────────────────────┘
+                       │
+          ┌────────────┼────────────┐
+          ▼            ▼            ▼
+   ┌──────────┐  ┌──────────┐  ┌──────────┐
+   │ DynamoDB │  │    S3    │  │  Resend  │
+   │          │  │          │  │  (Email) │
+   │ Projects │  │ originals│  └──────────┘
+   │ Images   │  │ thumbnails│
+   │ Inquiries│  │ medium   │
+   └──────────┘  └────┬─────┘
+                      │ S3 Event
+                      ▼
+                ┌──────────┐
+                │  Lambda  │
+                │  (sharp) │
+                │ auto     │
+                │ resize   │
+                └──────────┘
 ```
 
-## 🔮 향후 개선 아이디어
+<br/>
 
-- [ ] Shop 페이지 기능 구현 및 재고/주문 관리 연동
-- [ ] 문의 API 인증 (Recaptcha, Rate Limiting) 추가
-- [ ] Admin 콘솔 구축으로 이미지/메타데이터 관리 자동화
-- [ ] Express와 Lambda 코드 통합으로 서버리스 전환 일관성 강화
+## Features
 
-## 📞 연락처
+### Photo Book Carousel
+메인 페이지에서 프로젝트별 이미지를 저널 스타일 그리드로 자동 회전.
+레이아웃은 랜덤으로 선택되며, 다음 슬라이드를 미리 로드합니다.
 
-- **GitHub Issues**: [Issues](https://github.com/yoonmins/yoonminFilmArchive/issues)
-- **문의**: yoonmin.tech@gmail.com
+### Category-based Project View
+프로젝트 내 카테고리(예: Paris, Italy, Swiss)별 섹션 전환.
+우측 네비게이션으로 빠른 이동, IntersectionObserver로 현재 위치 추적.
+
+### Admin Dashboard
+프로젝트 CRUD, 이미지 업로드(drag & drop + presigned URL), 카테고리 관리, 문의 관리.
+변경 시 Next.js 캐시 자동 갱신 (revalidatePath).
+
+### Image Pipeline
+1. 관리자가 이미지 업로드 → S3 `originals/` presigned PUT
+2. Lambda 트리거 → sharp로 자동 리사이즈
+   - `thumbnails/` — 400px, WebP, q80
+   - `medium/` — 1200px, WebP, q85
+3. 메타데이터 DynamoDB 저장
+
+### Inquiry System
+About 페이지 문의 폼 → DynamoDB 저장 → Resend 이메일 알림.
+Rate limit: 50/day, 200/week.
+
+<br/>
+
+## Database Schema
+
+**Single Table Design** — 하나의 테이블(`yoonminfilm`)에 모든 엔티티 저장.
+
+| Entity | PK | SK | GSI1PK | GSI1SK |
+|--------|----|----|--------|--------|
+| Project | `PROJECT` | `PROJECT#<order>#<id>` | `SLUG#<slug>` | `PROJECT#<order>` |
+| Image | `PROJECT#<id>` | `IMAGE#<order>#<imgId>` | — | — |
+| Inquiry | `INQUIRY` | `INQ#<time>#<id>` | — | — |
+
+<br/>
+
+## Security
+
+| Layer | Implementation |
+|-------|---------------|
+| API Auth | JWT middleware — 모든 write API 인증 필수 |
+| Password | bcrypt hash (HttpOnly, Secure, SameSite cookie) |
+| S3 Write | presigned URL only (10분 유효) |
+| S3 Read | public (이미지 CDN 용도) |
+| Rate Limit | 문의 POST 50/day, 200/week |
+| Secrets | 환경변수 (.gitignore, Vercel encrypted) |
+
+<br/>
+
+## Version History
+
+### V2 — 2026.05 (Current)
+Next.js 풀스택 재구축.
+
+- Next.js 16 App Router + TypeScript + Tailwind CSS v4
+- DynamoDB Single Table Design
+- Admin 대시보드 (프로젝트 CRUD, 이미지/카테고리 관리)
+- S3 presigned upload + Lambda 자동 리사이즈
+- JWT 인증 + middleware API 보호
+- Photo book 스타일 메인 캐러셀
+- Resend 이메일 알림
+- Vercel + 커스텀 도메인 (yoonminfilm.co.kr)
+
+### V1 — 2024.11 ~ 2025.11
+React CRA + AWS Serverless 초기 버전.
+
+- React 18 SPA (CRA) + Bootstrap
+- Express + Lambda (Serverless Framework)
+- S3 JSON 파일 기반 데이터 저장
+- 카카오톡 알림 연동
+
+<br/>
+
+## Contact
+
+- **Site**: [www.yoonminfilm.co.kr](https://www.yoonminfilm.co.kr)
+- **Email**: yoonmin.tech@gmail.com
+- **Instagram**: [@yoonmin_film](https://www.instagram.com/yoonmin_film/)
