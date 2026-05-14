@@ -3,18 +3,18 @@
 <div align="center">
   <img src="./img/banner-logo.png" alt="Yoonmin Film Archive" width="40%"/>
   <br/><br/>
-  <p><strong>Photography Portfolio & Archive Platform</strong></p>
-  <p>작품과 커머셜 프로젝트를 한곳에 담아내는 디지털 갤러리</p>
-  <br/>
-  <a href="https://www.yoonminfilm.co.kr">www.yoonminfilm.co.kr</a>
+  <a href="https://www.yoonminfilm.co.kr"><strong>www.yoonminfilm.co.kr</strong></a>
 </div>
 
 <br/>
 
-## Overview
+## About
 
-Yoonmin Film Archive는 사진 작가 윤성민의 포트폴리오 웹 애플리케이션입니다.
-프로젝트별 갤러리, 카테고리 기반 작품 탐색, 문의 시스템, 관리자 대시보드를 제공합니다.
+Yoonmin Film Archive는 사진 작가 윤성민의 오리지널 작품을 큐레이팅하는 디지털 갤러리입니다.
+
+필름과 디지털로 담아낸 도시의 빛, 여행의 순간, 사람의 온도를 한곳에 모아 전시합니다. 단순한 포트폴리오를 넘어, 각 프로젝트의 맥락과 이야기를 카테고리별로 탐색할 수 있는 아카이브 형태로 구성되어 있습니다.
+
+사진이 가진 고유한 비율과 톤을 최대한 보존하는 것을 지향하며, 포토 저널 스타일의 레이아웃으로 작품을 감상할 수 있습니다.
 
 <br/>
 
@@ -47,72 +47,37 @@ Yoonmin Film Archive는 사진 작가 윤성민의 포트폴리오 웹 애플리
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                        Client                           │
-│              (Browser / Mobile)                         │
-└──────────────────────┬──────────────────────────────────┘
-                       │
-                       ▼
-┌──────────────────────────────────────────────────────────┐
-│                    Vercel (Edge)                         │
-│  ┌──────────┐  ┌───────────┐  ┌──────────────────────┐  │
-│  │ Middleware│─▶│ App Router│  │  Static / ISR Pages  │  │
-│  │ (JWT Auth)│  │ API Routes│  │  (project/[slug])    │  │
-│  └──────────┘  └─────┬─────┘  └──────────────────────┘  │
-└──────────────────────┼──────────────────────────────────┘
-                       │
-          ┌────────────┼────────────┐
-          ▼            ▼            ▼
-   ┌──────────┐  ┌──────────┐  ┌──────────┐
-   │ DynamoDB │  │    S3    │  │  Resend  │
-   │          │  │          │  │  (Email) │
-   │ Projects │  │ originals│  └──────────┘
-   │ Images   │  │ thumbnails│
-   │ Inquiries│  │ medium   │
-   └──────────┘  └────┬─────┘
-                      │ S3 Event
-                      ▼
-                ┌──────────┐
-                │  Lambda  │
-                │  (sharp) │
-                │ auto     │
-                │ resize   │
-                └──────────┘
-```
+<div align="center">
+  <img src="./img/architecture.png" alt="System Architecture & Image Pipeline" width="85%"/>
+</div>
 
 <br/>
 
 ## Features
 
 ### Photo Book Carousel
-메인 페이지에서 프로젝트별 이미지를 저널 스타일 그리드로 자동 회전.
-레이아웃은 랜덤으로 선택되며, 다음 슬라이드를 미리 로드합니다.
+메인 페이지에서 프로젝트별 이미지를 저널 스타일 그리드로 자동 회전합니다. 여러 레이아웃 템플릿 중 랜덤으로 선택되어 매번 다른 구성으로 보여주며, 다음 슬라이드의 이미지를 미리 로드하여 부드러운 전환을 제공합니다.
 
 ### Category-based Project View
-프로젝트 내 카테고리(예: Paris, Italy, Swiss)별 섹션 전환.
-우측 네비게이션으로 빠른 이동, IntersectionObserver로 현재 위치 추적.
+하나의 프로젝트 안에서 카테고리(예: Paris, Italy, Swiss)별로 작품을 구분합니다. 우측 네비게이션으로 카테고리 간 빠른 이동이 가능하고, 스크롤 위치를 IntersectionObserver로 추적하여 현재 보고 있는 카테고리를 자동으로 하이라이트합니다.
 
 ### Admin Dashboard
-프로젝트 CRUD, 이미지 업로드(drag & drop + presigned URL), 카테고리 관리, 문의 관리.
-변경 시 Next.js 캐시 자동 갱신 (revalidatePath).
+프로젝트 생성/수정/삭제, 이미지 업로드(drag & drop), 카테고리 관리, 문의 관리를 지원합니다. 데이터 변경 시 Next.js 캐시를 자동 갱신(revalidatePath)하여 프로덕션 사이트에 즉시 반영됩니다.
 
 ### Image Pipeline
-1. 관리자가 이미지 업로드 → S3 `originals/` presigned PUT
-2. Lambda 트리거 → sharp로 자동 리사이즈
-   - `thumbnails/` — 400px, WebP, q80
-   - `medium/` — 1200px, WebP, q85
-3. 메타데이터 DynamoDB 저장
+관리자가 이미지를 업로드하면 S3 presigned URL로 `originals/`에 직접 저장됩니다. S3 이벤트 트리거로 Lambda가 자동 실행되어 sharp로 두 가지 크기의 WebP 이미지를 생성합니다.
+
+- `thumbnails/` — 400px width, WebP q80
+- `medium/` — 1200px width, WebP q85
 
 ### Inquiry System
-About 페이지 문의 폼 → DynamoDB 저장 → Resend 이메일 알림.
-Rate limit: 50/day, 200/week.
+About 페이지의 문의 폼을 통해 촬영 문의를 접수합니다. DynamoDB에 저장되고 Resend를 통해 이메일 알림이 전송됩니다. 스팸 방지를 위해 일일 50건, 주간 200건의 rate limit이 적용됩니다.
 
 <br/>
 
 ## Database Schema
 
-**Single Table Design** — 하나의 테이블(`yoonminfilm`)에 모든 엔티티 저장.
+**Single Table Design** — 하나의 테이블(`yoonminfilm`)에 모든 엔티티를 저장합니다.
 
 | Entity | PK | SK | GSI1PK | GSI1SK |
 |--------|----|----|--------|--------|
